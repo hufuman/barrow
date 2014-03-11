@@ -1,0 +1,8 @@
+scrapy
+django
+south
+django-model-utils
+django-reversion
+django-xadmin
+apscheduler
+fabric

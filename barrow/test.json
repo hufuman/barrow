@@ -1,0 +1,62 @@
+{
+    "application": "demo",
+    "url_type": "list_page",
+    "list_xpath": "//div[@class=\"l\"]/ul[@class=\"list\"]/li",
+    "start_urls": [
+        "http://shouyou.178.com/list/news.html",
+        "http://shouyou.178.com/list/news_2.html",
+        "http://shouyou.178.com/list/news_3.html",
+        "http://shouyou.178.com/list/news_4.html",
+        "http://shouyou.178.com/list/news_5.html",
+        "http://shouyou.178.com/list/news_6.html",
+        "http://shouyou.178.com/list/news_7.html",
+        "http://shouyou.178.com/list/news_8.html",
+        "http://shouyou.178.com/list/news_9.html",
+        "http://shouyou.178.com/list/news_10.html"
+    ],
+    "allowed_domains": [
+        "shouyou.178.com"
+    ],
+    "cron": "* * * * *",
+    "item": {
+        "url": {
+            "type": "string"
+        },
+        "publish_time": {
+            "type": "datetime",
+            "format": "%Y-%m-%d"
+        },
+        "title": {
+            "type": "string",
+            "strip": ["#SPACE#", "#TAB#", "【多玩游戏报道】"],
+            "replace": {
+                "下载": "和谐",
+                "天安门": "和谐"
+            }
+        }
+
+    },
+    "unique_result": true,
+    "unique_keys": [
+        "url",
+        "title"
+    ],
+    "xpath": {
+        "keys": {
+            "url": ".//a/@href",
+            "title": ".//a/text()"
+        },
+        "follow": {
+            "follow_info": {
+                "url": {
+                    "base_url": "{article_url}",
+                    "article_url": "url"
+                }
+            },
+            "keys": {
+                "publish_time": "//div[@class=\"content\"]/div[@class=\"other\"]/span[2]/text()"
+            },
+            "follow": null
+        }
+    }
+}
