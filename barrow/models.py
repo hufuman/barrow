@@ -125,7 +125,7 @@ class SpiderResultManager(models.Manager):
 
     def add_result(self, spider_task, item, unique=False, unique_keys=None):
         sha = hashlib.sha256()
-        sha.update(spider_task.spider.pk)  # add spider pk into hash
+        sha.update(str(spider_task.spider.pk))  # add spider pk into hash
         json_item = ScrapyJSONEncoder().encode(item)
         if unique:
             for key in unique_keys:
