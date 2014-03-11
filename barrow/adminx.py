@@ -13,6 +13,7 @@ class ApplicationAdmin(object):
 
 
 class SpiderAdmin(object):
+    list_display = ['application', 'name', 'running']
 
     def save_models(self):
         self.new_obj.save()
