@@ -125,16 +125,17 @@ class SpiderResultManager(models.Manager):
 
     def add_result(self, spider_task, item, unique=False, unique_keys=None):
         sha = hashlib.sha256()
+        sha.update(spider_task.spider.pk)  # add spider pk into hash
         json_item = ScrapyJSONEncoder().encode(item)
         if unique:
             for key in unique_keys:
-                sha.update(item[key].encode('utf8'))
+                sha.update(item[key].encode('utf8'))  # hash content by unique keys
             hash_value = sha.hexdigest()
 
             if self.filter(hash_value=hash_value).exists():
                 return None
         else:
-            hash_value = sha.update(json_item).hexdigest()
+            hash_value = sha.update(json_item).hexdigest()  # hash whole content
 
         return self.create(spider_task=spider_task,
                            hash_value=hash_value,
@@ -149,6 +150,8 @@ class SpiderResult(models.Model):
     spider_task = models.ForeignKey(SpiderTask, verbose_name=u'Spider Task')
     hash_value = models.CharField(max_length=256, verbose_name=u'Hash')
     content = models.TextField(verbose_name=u'Result Content')
+    create_time = models.DateTimeField(verbose_name=u'Create Time', null=True, auto_now_add=True)
+    retrieved = models.BooleanField(verbose_name=u'Retrieved', default=False)
 
     class Meta(object):
         app_label = u'barrow'
