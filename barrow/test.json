@@ -24,14 +24,18 @@
         },
         "publish_time": {
             "type": "datetime",
-            "format": "%Y-%m-%d"
+            "replace": {
+                "发布时间： ": ""
+            },
+            "format": "%Y-%m-%d %H:%M:%S"
         },
         "title": {
             "type": "string",
-            "strip": ["#SPACE#", "#TAB#", "【多玩游戏报道】"],
+            "strip": ["#SPACE#", "#TAB#"],
             "replace": {
                 "下载": "和谐",
-                "天安门": "和谐"
+                "天安门": "和谐",
+                "【多玩游戏报道】": ""
             }
         }
 
@@ -54,7 +58,7 @@
                 }
             },
             "keys": {
-                "publish_time": "//div[@class=\"content\"]/div[@class=\"other\"]/span[2]/text()"
+                "publish_time": "//div[@class=\"content\"]/div[@class=\"other\"]/span[1]/text()"
             },
             "follow": null
         }

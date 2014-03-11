@@ -3,7 +3,6 @@
 
 __author__ = 'Jack River'
 
-import json
 import xadmin
 
 from barrow.models import *
@@ -26,7 +25,7 @@ class SpiderTaskAdmin(object):
 
 
 class SpiderResultAdmin(object):
-    pass
+    list_display = ['hash_value', 'create_time', 'retrieved']
 
 
 xadmin.site.register(Application, ApplicationAdmin)
