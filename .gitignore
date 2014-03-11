@@ -27,3 +27,5 @@ pip-log.txt
 .mr.developer.cfg
 
 db.sqlite3
+
+local_settings.py
