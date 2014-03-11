@@ -33,7 +33,11 @@ class Application(models.Model):
 
 
 def run_spider_task(spider):
-    SpiderTask.objects.create_and_run(spider)
+    if spider.running:
+        # wait for current spider task to finish
+        return
+    else:
+        SpiderTask.objects.create_and_run(spider)
 
 
 class Spider(models.Model):
@@ -42,6 +46,7 @@ class Spider(models.Model):
     application = models.ForeignKey(Application, verbose_name=u'Application')
     name = models.CharField(max_length=255, verbose_name=u'Spider Name', default=u'Default Spider')
     config = models.TextField(verbose_name=u'Spider Config')
+    running = models.BooleanField(verbose_name=u'Running', default=False)
 
     class Meta(object):
         app_label = u'barrow'
@@ -79,6 +84,9 @@ class SpiderTask(models.Model):
     def run(self):
         """ run task
         """
+        self.spider.running = True
+        self.spider.save()
+
         # change to running state
         self.state = self.SPIDER_TASK_STATE.running
         self.save()
@@ -91,6 +99,9 @@ class SpiderTask(models.Model):
         self.state = self.SPIDER_TASK_STATE.finished
         self.end_time = datetime.datetime.now()
         self.save()
+
+        self.spider.running = False
+        self.spider.save()
 
     class Meta(object):
         app_label = u'barrow'
