@@ -3,6 +3,7 @@
 
 __author__ = 'Jack River'
 
+import datetime
 import json
 from scrapy.item import Item, Field
 from scrapy.spider import Spider, Request
@@ -32,6 +33,38 @@ class DynamicSpider(Spider):
                                             allowed_domains=self.spider_config['allowed_domains'],
                                             start_urls=self.spider_config['start_urls'])
 
+    def parse_item(self, key, field):
+        item_config = self.spider_config['item']
+        if not key in item_config.keys():
+            return field
+
+        key_config = item_config[key]
+
+        # start parsing
+
+        # string parsing
+        if isinstance(field, str) or isinstance(field, unicode):
+            # string replace
+            if 'replace' in key_config.keys():
+                for replace_key, replace_value in key_config['replace'].iteritems():
+                    field = field.replace(replace_key, replace_value)
+
+            # string striping
+            if 'strip' in key_config.keys():
+                for strip_key in key_config['strip']:
+                    if strip_key == '#TAB#':
+                        field = field.strip('\t')
+                    elif strip_key == '#SPACE#':
+                        field = field.strip()
+                    else:
+                        field = field.strip(strip_key)
+
+            # datetime parse
+            if key_config['type'] == 'datetime':
+                field = datetime.datetime.strptime(field, key_config['format'])
+
+            return field
+
     def parse(self, response):
         """ parse first response
         """
@@ -47,6 +80,8 @@ class DynamicSpider(Spider):
                         item[key] = result[0]
                     else:
                         item[key] = result
+
+                    item[key] = self.parse_item(key, item[key])  # parse item field
 
                 # construct follow request if configured
                 if self.spider_config['xpath']['follow'] is not None:
@@ -90,6 +125,8 @@ class DynamicSpider(Spider):
                 item[key] = result[0]
             else:
                 item[key] = result
+
+            item[key] = self.parse_item(key, item[key])  # parse item field
 
         # construct follow request if configured
         if follow_config['follow'] is not None:
