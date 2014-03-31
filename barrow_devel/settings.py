@@ -42,6 +42,7 @@ EXTERNAL_APPS = [
     'xadmin',
     'crispy_forms',
     'reversion',
+    'rest_framework',
 ]
 
 INTERNAL_APPS = [

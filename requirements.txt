@@ -6,3 +6,5 @@ django-reversion
 django-xadmin
 apscheduler
 fabric
+djangorestframework
+pytz

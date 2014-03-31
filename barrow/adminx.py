@@ -4,6 +4,7 @@
 __author__ = 'Jack River'
 
 import xadmin
+import pytz
 
 from barrow.models import *
 
@@ -16,9 +17,8 @@ class SpiderAdmin(object):
     list_display = ['application', 'name', 'running']
 
     def save_models(self):
+        self.new_obj.last_update = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         self.new_obj.save()
-
-        add_spider_to_scheduler(self.new_obj)
 
 
 class SpiderTaskAdmin(object):

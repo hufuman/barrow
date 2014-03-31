@@ -12,10 +12,6 @@ from django.db import models
 from scrapy.utils.serialize import ScrapyJSONEncoder
 from model_utils import Choices
 
-from apscheduler.scheduler import Scheduler
-
-global_schedulers = {}
-
 
 class Application(models.Model):
     """ application model
@@ -32,14 +28,6 @@ class Application(models.Model):
         return self.display_name
 
 
-def run_spider_task(spider):
-    if spider.running:
-        # wait for current spider task to finish
-        return
-    else:
-        SpiderTask.objects.create_and_run(spider)
-
-
 class Spider(models.Model):
     """ spider model
     """
@@ -47,6 +35,7 @@ class Spider(models.Model):
     name = models.CharField(max_length=255, verbose_name=u'Spider Name', default=u'Default Spider')
     config = models.TextField(verbose_name=u'Spider Config')
     running = models.BooleanField(verbose_name=u'Running', default=False)
+    last_update = models.DateTimeField(verbose_name=u'Update Time', auto_now_add=True)
 
     class Meta(object):
         app_label = u'barrow'
@@ -109,27 +98,6 @@ class SpiderTask(models.Model):
         verbose_name_plural = u'Spider Task'
 
 
-def add_spider_to_scheduler(spider):
-    # manage scheduler
-    key = spider.pk
-    if key in global_schedulers.keys():
-        scheduler = global_schedulers.pop(key)
-        scheduler.shutdown()
-
-    scheduler = Scheduler()
-    scheduler.start()
-    cron_config = json.loads(spider.config)['cron']
-    minute, hour, day, month, day_of_week = cron_config.split(' ')
-    scheduler.add_cron_job(run_spider_task,
-                           minute=minute,
-                           hour=hour,
-                           day=day,
-                           month=month,
-                           day_of_week=day_of_week,
-                           kwargs={'spider': spider})
-    global_schedulers[spider.pk] = scheduler
-
-
 class SpiderResultManager(models.Manager):
     """ spider result model manager
     """
@@ -151,6 +119,14 @@ class SpiderResultManager(models.Manager):
         return self.create(spider_task=spider_task,
                            hash_value=hash_value,
                            content=json_item)
+
+    # def fetch_result(self, spider_id):
+    #     spider = Spider.objects.filter(pk=spider_id)
+    #     if not spider.exists():
+    #         raise AttributeError('spider not found')
+    #     spider = spider[0]
+    #
+    #     self.filter()  #TODO
 
 
 class SpiderResult(models.Model):
