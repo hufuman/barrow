@@ -10,20 +10,9 @@ from barrow.models import Spider, SpiderTask
 import pytz
 
 import datetime
-import signal
-import sys
-
-
-def signal_handler(signal, frame):
-    print 'You pressed Ctrl+C!'
-    sys.exit(0)
-signal.signal(signal.SIGINT, signal_handler)
-
-
 from apscheduler.scheduler import Scheduler
 
 global_schedulers = {}
-
 last_update_time = datetime.datetime(year=1900, month=01, day=01, tzinfo=pytz.utc)
 
 
@@ -76,9 +65,10 @@ def update_scheduler():
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        scheduler = Scheduler()
+        scheduler = Scheduler(standalone=True)
         scheduler.add_interval_job(update_scheduler, seconds=10)
-        scheduler.start()  # g is the greenlet that runs the scheduler loop
         print('Press Ctrl+C to exit')
-        while True:
-            continue
+        try:
+            scheduler.start()  # g is the greenlet that runs the scheduler loop
+        except (KeyboardInterrupt, SystemExit):
+            pass
