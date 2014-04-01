@@ -3,6 +3,7 @@
 
 __author__ = 'Jack River'
 
+import time
 import pytz
 from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField
@@ -20,7 +21,7 @@ class SpiderResultSerializer(serializers.ModelSerializer):
 
     def parse_create_time(self, instance):
         local_tz = pytz.timezone('Asia/Shanghai')
-        return instance.create_time.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime('%Y-%m-%d %H:%M:%S')
+        return time.mktime(instance.create_time.replace(tzinfo=pytz.utc).astimezone(local_tz).timetuple())
 
     class Meta():
         model = SpiderResult
