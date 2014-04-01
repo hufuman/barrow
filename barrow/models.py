@@ -146,6 +146,10 @@ class SpiderResultManager(models.Manager):
         if unique:
             for key in unique_keys:
                 sha.update(item[key].encode('utf8'))  # hash content by unique keys
+
+            # add spider unique
+            sha.update('spider' + spider_task.spider.pk)
+
             hash_value = sha.hexdigest()
 
             if self.filter(hash_value=hash_value).exists():
