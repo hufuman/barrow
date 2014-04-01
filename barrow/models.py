@@ -9,6 +9,7 @@ import hashlib
 from fabric.api import local, lcd
 from django.conf import settings
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 from scrapy.utils.serialize import ScrapyJSONEncoder
 from model_utils import Choices
 
@@ -28,14 +29,49 @@ class Application(models.Model):
         return self.display_name
 
 
+class SpiderTag(models.Model):
+    """ spider tag model
+    """
+    name = models.CharField(max_length=255, verbose_name=u'Tag Name')
+
+    class Meta(object):
+        app_label = u'barrow'
+        verbose_name = u'SpiderTag'
+        verbose_name_plural = u'SpiderTag'
+
+    def __unicode__(self):
+        return self.name
+
+
+class SpiderManager(models.Manager):
+    """ spider model manager
+    """
+
+    def get_by_tags(self, tag_names):
+        tags = list()
+        for name in tag_names:
+            try:
+                SpiderTag.objects.get(name=name)
+            except ObjectDoesNotExist:
+                pass
+
+        if not tags:
+            return None
+        else:
+            return self.filter(tags__in=tags)
+
+
 class Spider(models.Model):
     """ spider model
     """
+    objects = SpiderManager()
+
     application = models.ForeignKey(Application, verbose_name=u'Application')
     name = models.CharField(max_length=255, verbose_name=u'Spider Name', default=u'Default Spider')
     config = models.TextField(verbose_name=u'Spider Config')
     running = models.BooleanField(verbose_name=u'Running', default=False)
     last_update = models.DateTimeField(verbose_name=u'Update Time', auto_now_add=True)
+    tags = models.ManyToManyField(SpiderTag, verbose_name=u'Tags', related_name=u'spiders')
 
     class Meta(object):
         app_label = u'barrow'
@@ -120,13 +156,22 @@ class SpiderResultManager(models.Manager):
                            hash_value=hash_value,
                            content=json_item)
 
-    # def fetch_result(self, spider_id):
-    #     spider = Spider.objects.filter(pk=spider_id)
-    #     if not spider.exists():
-    #         raise AttributeError('spider not found')
-    #     spider = spider[0]
-    #
-    #     self.filter()  #TODO
+    def fetch_result_spider(self, spider):
+        results = self.filter(spider_task__spider=spider, retrieved=False)
+        if results:
+            results.update(retrieved=True)
+            return results
+        else:
+            return []
+
+    def fetch_result_application(self, application):
+        results = self.filter(spider_task__spider__application=application, retrieved=False)
+        if results.exists():
+            return_results = list(results)
+            results.update(retrieved=True)
+            return return_results
+        else:
+            return []
 
 
 class SpiderResult(models.Model):

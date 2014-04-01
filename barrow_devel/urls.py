@@ -8,4 +8,5 @@ xversion.register_models()
 
 urlpatterns = patterns('',
     url(r'xadmin/', include(xadmin.site.urls)),
+    url(r'', include('barrow.urls')),
 )
