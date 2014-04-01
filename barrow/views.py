@@ -9,14 +9,14 @@ from barrow.models import Application, SpiderResult
 from barrow.serializers import SpiderResultSerializer
 
 
-class FetchResultView(APIView):
+class FetchUnreadResultView(APIView):
     """ fetch result view
     """
 
     def get(self, request, application):
         if application and Application.objects.filter(name=application).exists():
             application = Application.objects.get(name=application)
-            return Response(SpiderResultSerializer(SpiderResult.objects.fetch_result_application(application)).data)
+            return Response(SpiderResultSerializer(SpiderResult.objects.fetch_unread_result_application(application)).data)
         else:
             return Response(status=403)
 

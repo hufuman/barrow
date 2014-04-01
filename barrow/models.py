@@ -165,7 +165,7 @@ class SpiderResultManager(models.Manager):
         else:
             return []
 
-    def fetch_result_application(self, application):
+    def fetch_unread_result_application(self, application):
         results = self.filter(spider_task__spider__application=application, retrieved=False)
         if results.exists():
             return_results = list(results)
