@@ -8,6 +8,6 @@ from barrow.views import FetchUnreadResultView, IndexView, FetchByTimestampView
 
 urlpatterns = patterns('',
     url(r'^$', IndexView.as_view(), name='index'),
-    url(r'fetch/unread/(?P<application>\w+)', FetchUnreadResultView.as_view(), name='fetch-unread'),
+    url(r'fetch/(?P<application>\w+)/unread', FetchUnreadResultView.as_view(), name='fetch-unread'),
     url(r'fetch/(?P<application>\w+)/time/(?P<timestamp>\w+)', FetchByTimestampView.as_view(), name='fetch-by-time'),
 )
