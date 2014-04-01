@@ -10,7 +10,7 @@ from barrow.models import *
 
 
 class ApplicationAdmin(object):
-    pass
+    list_display = ['name']
 
 
 class SpiderAdmin(object):
@@ -29,7 +29,11 @@ class SpiderResultAdmin(object):
     list_display = ['hash_value', 'create_time', 'retrieved']
 
 
+class SpiderTagAdmin(object):
+    list_display = ['name']
+
 xadmin.site.register(Application, ApplicationAdmin)
 xadmin.site.register(Spider, SpiderAdmin)
 xadmin.site.register(SpiderTask, SpiderTaskAdmin)
 xadmin.site.register(SpiderResult, SpiderResultAdmin)
+xadmin.site.register(SpiderTag, SpiderTagAdmin)

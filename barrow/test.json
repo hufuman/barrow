@@ -12,30 +12,28 @@
         "http://shouyou.178.com/list/news_7.html",
         "http://shouyou.178.com/list/news_8.html",
         "http://shouyou.178.com/list/news_9.html",
-        "http://shouyou.178.com/list/news_10.html"
+        "http://shouyou.178.com/list/news_10.html",
+        "http://shouyou.178.com/list/news_11.html",
+        "http://shouyou.178.com/list/news_19.html",
     ],
     "allowed_domains": [
         "shouyou.178.com"
     ],
-    "cron": "* * * * *",
+    "cron": "*/5 * * * *",
     "item": {
         "url": {
             "type": "string"
         },
         "publish_time": {
             "type": "datetime",
-            "replace": {
-                "发布时间： ": ""
-            },
-            "format": "%Y-%m-%d %H:%M:%S"
+            "format": "%Y-%m-%d"
         },
         "title": {
             "type": "string",
-            "strip": ["#SPACE#", "#TAB#"],
+            "strip": ["#SPACE#", "#TAB#", "【多玩游戏报道】"],
             "replace": {
                 "下载": "和谐",
-                "天安门": "和谐",
-                "【多玩游戏报道】": ""
+                "天安门": "和谐"
             }
         }
 
@@ -58,7 +56,7 @@
                 }
             },
             "keys": {
-                "publish_time": "//div[@class=\"content\"]/div[@class=\"other\"]/span[1]/text()"
+                "publish_time": "//div[@class=\"content\"]/div[@class=\"other\"]/span[2]/text()"
             },
             "follow": null
         }
