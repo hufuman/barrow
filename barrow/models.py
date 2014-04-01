@@ -175,7 +175,7 @@ class SpiderResultManager(models.Manager):
             return []
 
     def fetch_result_application_and_time(self, application, request_time):
-        results = self.filter(spider_task__spider__application=application, create_time__lt=request_time)
+        results = self.filter(spider_task__spider__application=application, create_time__gt=request_time)
         if results.exists():
             return results
         else:

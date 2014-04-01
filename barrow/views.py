@@ -30,7 +30,7 @@ class FetchByTimestampView(APIView):
             application = Application.objects.get(name=application)
             local_tz = pytz.timezone('Asia/Shanghai')
 
-            request_time = datetime.datetime.fromtimestamp(int(timestamp)).replace(tzinfo=local_tz).astimezone(pytz.utc)
+            request_time = datetime.datetime.fromtimestamp(int(timestamp)).replace(tzinfo=local_tz)
 
             objects = SpiderResult.objects.fetch_result_application_and_time(application, request_time)
 
