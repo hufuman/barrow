@@ -3,6 +3,7 @@
 
 __author__ = 'Jack River'
 
+import pytz
 import json
 import datetime
 import hashlib
@@ -122,7 +123,7 @@ class SpiderTask(models.Model):
 
         # change to finish state
         self.state = self.SPIDER_TASK_STATE.finished
-        self.end_time = datetime.datetime.now()
+        self.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         self.save()
 
         self.spider.running = False
@@ -170,6 +171,13 @@ class SpiderResultManager(models.Manager):
             return_results = list(results)
             results.update(retrieved=True)
             return return_results
+        else:
+            return []
+
+    def fetch_result_application_and_time(self, application, request_time):
+        results = self.filter(spider_task__spider__application=application, create_time__lt=request_time)
+        if results.exists():
+            return results
         else:
             return []
 
