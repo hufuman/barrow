@@ -33,6 +33,25 @@ class DynamicSpider(Spider):
                                             allowed_domains=self.spider_config['allowed_domains'],
                                             start_urls=self.spider_config['start_urls'])
 
+    def _process_strip(self, source, strip_data):
+        if isinstance(source, str) or isinstance(source, unicode):
+            for strip_key in strip_data:
+                if strip_key == '#TAB#':
+                    source = source.strip('\t')
+                elif strip_key == '#SPACE#':
+                    source = source.strip()
+                else:
+                    source = source.strip(strip_key)
+
+        return source
+
+    def _process_replace(self, source, replace_data):
+        if isinstance(source, str) or isinstance(source, unicode):
+             for replace_key, replace_value in replace_data.iteritems():
+                 source = source.replace(replace_key, replace_value)
+
+        return source
+
     def parse_item(self, key, field):
         item_config = self.spider_config['item']
         if not key in item_config.keys():
@@ -40,30 +59,19 @@ class DynamicSpider(Spider):
 
         key_config = item_config[key]
 
-        # start parsing
+        # perform parse actions if defined
+        if 'parse' in key_config.keys():
+            for action in key_config['parse']:
+                if action['action'] == 'strip':
+                    field = self._process_strip(field, action['data'])
+                elif action['action'] == 'replace':
+                    field = self._process_replace(field, action['data'])
 
-        # string parsing
-        if isinstance(field, str) or isinstance(field, unicode):
-            # string replace
-            if 'replace' in key_config.keys():
-                for replace_key, replace_value in key_config['replace'].iteritems():
-                    field = field.replace(replace_key, replace_value)
+        # format datetime field type
+        if key_config['type'] == 'datetime':
+            field = datetime.datetime.strptime(field, key_config['format'])
 
-            # string striping
-            if 'strip' in key_config.keys():
-                for strip_key in key_config['strip']:
-                    if strip_key == '#TAB#':
-                        field = field.strip('\t')
-                    elif strip_key == '#SPACE#':
-                        field = field.strip()
-                    else:
-                        field = field.strip(strip_key)
-
-            # datetime parse
-            if key_config['type'] == 'datetime':
-                field = datetime.datetime.strptime(field, key_config['format'])
-
-            return field
+        return field
 
     def parse(self, response):
         """ parse first response
