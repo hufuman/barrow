@@ -148,7 +148,7 @@ class SpiderResultManager(models.Manager):
                 sha.update(item[key].encode('utf8'))  # hash content by unique keys
 
             # add spider unique
-            sha.update('spider' + spider_task.spider.pk)
+            sha.update('spider' + str(spider_task.spider.pk))
 
             hash_value = sha.hexdigest()
 
