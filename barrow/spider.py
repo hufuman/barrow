@@ -47,8 +47,8 @@ class DynamicSpider(Spider):
 
     def _process_replace(self, source, replace_data):
         if isinstance(source, str) or isinstance(source, unicode):
-             for replace_key, replace_value in replace_data.iteritems():
-                 source = source.replace(replace_key, replace_value)
+            for replace_key, replace_value in replace_data.iteritems():
+                source = source.replace(replace_key, replace_value)
 
         return source
 
