@@ -52,6 +52,15 @@ class DynamicSpider(Spider):
 
         return source
 
+    def _process_append(self, source, append_data):
+        if isinstance(source, str) or isinstance(source, unicode):
+            if append_data['position'] == 'begin':
+                source = append_data['string'] + source
+            elif append_data['position'] == 'end':
+                source = source + append_data['string']
+
+        return source
+
     def parse_item(self, key, field):
         item_config = self.spider_config['item']
         if not key in item_config.keys():
@@ -62,10 +71,13 @@ class DynamicSpider(Spider):
         # perform parse actions if defined
         if 'parse' in key_config.keys():
             for action in key_config['parse']:
+                # process all kinds of actions
                 if action['action'] == 'strip':
                     field = self._process_strip(field, action['data'])
                 elif action['action'] == 'replace':
                     field = self._process_replace(field, action['data'])
+                elif action['action'] == 'append':
+                    field = self._process_append(field, action['data'])
 
         # format datetime field type
         if key_config['type'] == 'datetime':
