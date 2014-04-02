@@ -92,45 +92,48 @@ class DynamicSpider(Spider):
             sel = Selector(response)
             box = sel.xpath(self.spider_config['list_xpath'])
             for x in box:
-                item = DynamicItem(self.spider_config['item'])
-                for key, value in self.spider_config['xpath']['keys'].iteritems():
-                    result = x.xpath(value).extract()
-                    if len(result) == 1:
-                        # single value
-                        item[key] = result[0]
+                try:
+                    item = DynamicItem(self.spider_config['item'])
+                    for key, value in self.spider_config['xpath']['keys'].iteritems():
+                        result = x.xpath(value).extract()
+                        if len(result) == 1:
+                            # single value
+                            item[key] = result[0]
+                        else:
+                            item[key] = result
+
+                        item[key] = self.parse_item(key, item[key])  # parse item field
+
+                    # construct follow request if configured
+                    if self.spider_config['xpath']['follow'] is not None:
+                        # more to follow
+                        follow_config = self.spider_config['xpath']['follow']
+                        if len(follow_config['follow_info']['url'].keys()) >= 2:
+                            # needs string formation
+                            arguments = dict()
+                            for key, value in follow_config['follow_info']['url'].iteritems():
+                                # construct arguments
+                                if not key == 'base_url':
+                                    arguments[key] = item[value]
+                            url = follow_config['follow_info']['url']['base_url'].format(**arguments)
+                        else:
+                            url = follow_config['follow_info']['url']['base_url']
+
+                        request = Request(url, callback=self.parse_follow)
+                        request.meta['item'] = item
+                        request.meta['config'] = follow_config
+
+                        yield request
                     else:
-                        item[key] = result
-
-                    item[key] = self.parse_item(key, item[key])  # parse item field
-
-                # construct follow request if configured
-                if self.spider_config['xpath']['follow'] is not None:
-                    # more to follow
-                    follow_config = self.spider_config['xpath']['follow']
-                    if len(follow_config['follow_info']['url'].keys()) >= 2:
-                        # needs string formation
-                        arguments = dict()
-                        for key, value in follow_config['follow_info']['url'].iteritems():
-                            # construct arguments
-                            if not key == 'base_url':
-                                arguments[key] = item[value]
-                        url = follow_config['follow_info']['url']['base_url'].format(**arguments)
-                    else:
-                        url = follow_config['follow_info']['url']['base_url']
-
-                    request = Request(url, callback=self.parse_follow)
-                    request.meta['item'] = item
-                    request.meta['config'] = follow_config
-
-                    yield request
-                else:
-                    # no follow request, so save the item
-                    get_model('barrow', 'SpiderResult').objects.add_result(spider_task=self.spider_task,
-                                                                           item=item,
-                                                                           unique=self.spider_config.get(
-                                                                               'unique_result', False),
-                                                                           unique_keys=self.spider_config.get(
-                                                                               'unique_keys', None))
+                        # no follow request, so save the item
+                        get_model('barrow', 'SpiderResult').objects.add_result(spider_task=self.spider_task,
+                                                                               item=item,
+                                                                               unique=self.spider_config.get(
+                                                                                   'unique_result', False),
+                                                                               unique_keys=self.spider_config.get(
+                                                                                   'unique_keys', None))
+                except:
+                    continue
 
     def parse_follow(self, response):
         """ parse follow response
