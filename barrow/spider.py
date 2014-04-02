@@ -127,9 +127,10 @@ class DynamicSpider(Spider):
                     # no follow request, so save the item
                     get_model('barrow', 'SpiderResult').objects.add_result(spider_task=self.spider_task,
                                                                            item=item,
-                                                                           unique=self.spider_config['unique_result'],
-                                                                           unique_keys=self.spider_config[
-                                                                               'unique_keys'])
+                                                                           unique=self.spider_config.get(
+                                                                               'unique_result', False),
+                                                                           unique_keys=self.spider_config.get(
+                                                                               'unique_keys', None))
 
     def parse_follow(self, response):
         """ parse follow response
@@ -172,5 +173,7 @@ class DynamicSpider(Spider):
             # no follow request, so save the item
             get_model('barrow', 'SpiderResult').objects.add_result(spider_task=self.spider_task,
                                                                    item=item,
-                                                                   unique=self.spider_config['unique_result'],
-                                                                   unique_keys=self.spider_config['unique_keys'])
+                                                                   unique=self.spider_config.get('unique_result',
+                                                                                                 False),
+                                                                   unique_keys=self.spider_config.get('unique_keys',
+                                                                                                      None))
