@@ -61,6 +61,9 @@ class SpiderManager(models.Manager):
         else:
             return self.filter(tags__in=tags)
 
+    def reset_spider_state(self):
+        self.all().update(running=False)
+
 
 class Spider(models.Model):
     """ spider model

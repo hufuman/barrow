@@ -5,7 +5,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import redirect
-from barrow.models import Application, SpiderResult
+from barrow.models import Application, SpiderResult, Spider
 from barrow.serializers import SpiderResultSerializer
 
 
@@ -43,3 +43,12 @@ class IndexView(APIView):
 
     def get(self, request):
         return redirect('/xadmin/')
+
+
+class ResetSpiderView(APIView):
+    """ reset spider view
+    """
+
+    def get(self, request):
+        Spider.objects.reset_spider_state()
+        return Response({'result': 'ok'})
