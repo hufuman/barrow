@@ -38,7 +38,8 @@ class SpiderTagManager(models.Manager):
         spiders = Spider.objects.filter(application=application)
         result = set()
         for spider in spiders:
-            result.add(spider.tags.all())
+            for tag in spider.tags.all():
+                result.add(tag)
 
         return list(result)
 
