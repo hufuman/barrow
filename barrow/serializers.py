@@ -7,7 +7,7 @@ import time
 import pytz
 from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField
-from barrow.models import SpiderResult
+from barrow.models import SpiderResult, SpiderTag
 
 
 class SpiderResultSerializer(serializers.ModelSerializer):
@@ -23,6 +23,14 @@ class SpiderResultSerializer(serializers.ModelSerializer):
         local_tz = pytz.timezone('Asia/Shanghai')
         return time.mktime(instance.create_time.replace(tzinfo=pytz.utc).astimezone(local_tz).timetuple())
 
-    class Meta():
+    class Meta(object):
         model = SpiderResult
         fields = ['hash_value', 'content', 'create_time', 'tags']
+
+
+class SpiderTagSerializer(serializers.ModelSerializer):
+    """ spider tag model serializer
+    """
+
+    class Meta(object):
+        model = SpiderTag

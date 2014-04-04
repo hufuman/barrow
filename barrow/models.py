@@ -30,15 +30,30 @@ class Application(models.Model):
         return self.display_name
 
 
+class SpiderTagManager(models.Manager):
+    """ spider tag model manager
+    """
+
+    def tags_in_application(self, application):
+        spiders = Spider.objects.filter(application=application)
+        result = []
+        for spider in spiders:
+            result += spider.tags.all()
+
+        return result
+
+
 class SpiderTag(models.Model):
     """ spider tag model
     """
+    objects = SpiderTagManager()
+
     name = models.CharField(max_length=255, verbose_name=u'Tag Name')
 
     class Meta(object):
         app_label = u'barrow'
-        verbose_name = u'SpiderTag'
-        verbose_name_plural = u'SpiderTag'
+        verbose_name = u'Spider Tag'
+        verbose_name_plural = u'Spider Tag'
 
     def __unicode__(self):
         return self.name
