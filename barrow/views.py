@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import redirect
 from barrow.models import Application, SpiderResult, Spider, SpiderTag
-from barrow.serializers import SpiderResultSerializer, SpiderTagSerializer
+from barrow.serializers import SpiderResultSerializer, SpiderTagSerializer, PrioritizedSpiderResultSerializer
 
 
 class FetchUnreadResultView(APIView):
@@ -14,9 +14,15 @@ class FetchUnreadResultView(APIView):
     """
 
     def get(self, request, application):
+        prioritized = request.GET.get('prioritized', 0)
+        if prioritized:
+            serializer_class = PrioritizedSpiderResultSerializer
+        else:
+            serializer_class = SpiderResultSerializer
+
         if application and Application.objects.filter(name=application).exists():
             application = Application.objects.get(name=application)
-            return Response(SpiderResultSerializer(SpiderResult.objects.fetch_unread_result_application(application)).data)
+            return Response(serializer_class(SpiderResult.objects.fetch_unread_result_application(application)).data)
         else:
             return Response(status=403)
 
@@ -26,6 +32,12 @@ class FetchByTimestampView(APIView):
     """
 
     def get(self, request, application, timestamp):
+        prioritized = request.GET.get('prioritized', 0)
+        if prioritized:
+            serializer_class = PrioritizedSpiderResultSerializer
+        else:
+            serializer_class = SpiderResultSerializer
+
         if application and Application.objects.filter(name=application).exists():
             application = Application.objects.get(name=application)
             local_tz = pytz.timezone('Asia/Shanghai')
@@ -34,7 +46,7 @@ class FetchByTimestampView(APIView):
 
             objects = SpiderResult.objects.fetch_result_application_and_time(application, request_time)
 
-            return Response(SpiderResultSerializer(objects).data)
+            return Response(serializer_class(objects).data)
         else:
             return Response(status=403)
 

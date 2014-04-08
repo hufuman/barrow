@@ -86,12 +86,20 @@ class Spider(models.Model):
     """
     objects = SpiderManager()
 
+    SPIDER_PRIORITY_LEVELS = Choices((0, 'unimportant', u'不重要的'),
+                                     (1, 'low', u'低'),
+                                     (2, 'medium', u'中',),
+                                     (3, 'high', u'高'),
+                                     (4, 'critical', u'至关重要的'))
+
     application = models.ForeignKey(Application, verbose_name=u'Application')
     name = models.CharField(max_length=255, verbose_name=u'Spider Name', default=u'Default Spider')
     config = models.TextField(verbose_name=u'Spider Config')
     running = models.BooleanField(verbose_name=u'Running', default=False)
     last_update = models.DateTimeField(verbose_name=u'Update Time', auto_now_add=True)
     tags = models.ManyToManyField(SpiderTag, verbose_name=u'Tags', related_name=u'spiders')
+    priority = models.IntegerField(choices=SPIDER_PRIORITY_LEVELS, verbose_name=u'优先级',
+                                   default=SPIDER_PRIORITY_LEVELS.low)
 
     class Meta(object):
         app_label = u'barrow'

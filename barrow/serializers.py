@@ -6,7 +6,7 @@ __author__ = 'Jack River'
 import time
 import pytz
 from rest_framework import serializers
-from rest_framework.serializers import SerializerMethodField
+from rest_framework.serializers import SerializerMethodField, Field
 from barrow.models import SpiderResult, SpiderTag
 
 
@@ -26,6 +26,14 @@ class SpiderResultSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = SpiderResult
         fields = ['hash_value', 'content', 'create_time', 'tags']
+
+
+class PrioritizedSpiderResultSerializer(SpiderResultSerializer):
+    priority = Field(source='spider_task.spider.priority')
+
+    class Meta(object):
+        model = SpiderResult
+        fields = ['hash_value', 'content', 'create_time', 'tags', 'priority']
 
 
 class SpiderTagSerializer(serializers.ModelSerializer):
