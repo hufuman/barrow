@@ -221,8 +221,8 @@ class SpiderResult(models.Model):
     spider_task = models.ForeignKey(SpiderTask, verbose_name=u'Spider Task')
     hash_value = models.CharField(max_length=256, verbose_name=u'Hash')
     content = models.TextField(verbose_name=u'Result Content')
-    create_time = models.DateTimeField(verbose_name=u'Create Time', null=True, auto_now_add=True)
-    retrieved = models.BooleanField(verbose_name=u'Retrieved', default=False)
+    create_time = models.DateTimeField(verbose_name=u'Create Time', null=True, auto_now_add=True, db_index=True)
+    retrieved = models.BooleanField(verbose_name=u'Retrieved', default=False, db_index=True)
 
     class Meta(object):
         app_label = u'barrow'
