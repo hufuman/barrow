@@ -3,6 +3,7 @@
 
 __author__ = 'Jack River'
 
+import json
 import time
 import pytz
 from rest_framework import serializers
@@ -17,7 +18,7 @@ class SpiderResultSerializer(serializers.ModelSerializer):
     create_time = SerializerMethodField('parse_create_time')
 
     def get_tags(self, instance):
-        return instance.spider_task.spider.tags.all()
+        return json.loads(instance.tags)
 
     def parse_create_time(self, instance):
         local_tz = pytz.timezone('Asia/Shanghai')

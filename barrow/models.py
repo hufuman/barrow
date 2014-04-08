@@ -166,7 +166,7 @@ class SpiderResultManager(models.Manager):
     """ spider result model manager
     """
 
-    def add_result(self, spider_task, item, unique=False, unique_keys=None):
+    def add_result(self, spider_task, item, unique=False, unique_keys=None, tags=[]):
         sha = hashlib.sha256()
         sha.update(str(spider_task.spider.pk))  # add spider pk into hash
         json_item = ScrapyJSONEncoder().encode(item)
@@ -186,7 +186,8 @@ class SpiderResultManager(models.Manager):
 
         return self.create(spider_task=spider_task,
                            hash_value=hash_value,
-                           content=json_item)
+                           content=json_item,
+                           tags=json.dumps(tags))
 
     def fetch_result_spider(self, spider):
         results = self.filter(spider_task__spider=spider, retrieved=False)
@@ -223,6 +224,7 @@ class SpiderResult(models.Model):
     content = models.TextField(verbose_name=u'Result Content')
     create_time = models.DateTimeField(verbose_name=u'Create Time', null=True, auto_now_add=True, db_index=True)
     retrieved = models.BooleanField(verbose_name=u'Retrieved', default=False, db_index=True)
+    tags = models.TextField(verbose_name=u'Tags', default=u'[]')
 
     class Meta(object):
         app_label = u'barrow'

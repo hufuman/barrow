@@ -32,6 +32,7 @@ class DynamicSpider(Spider):
         super(DynamicSpider, self).__init__(name=self.spider_config['application'],
                                             allowed_domains=self.spider_config['allowed_domains'],
                                             start_urls=self.spider_config['start_urls'])
+        self.spider_tags = self.spider_task.spider.tags.all()
 
     def _process_strip(self, source, strip_data):
         if isinstance(source, str) or isinstance(source, unicode):
@@ -131,7 +132,8 @@ class DynamicSpider(Spider):
                                                                                unique=self.spider_config.get(
                                                                                    'unique_result', False),
                                                                                unique_keys=self.spider_config.get(
-                                                                                   'unique_keys', None))
+                                                                                   'unique_keys', None),
+                                                                               tags=self.spider_tags)
                 except:
                     continue
 
@@ -179,4 +181,5 @@ class DynamicSpider(Spider):
                                                                    unique=self.spider_config.get('unique_result',
                                                                                                  False),
                                                                    unique_keys=self.spider_config.get('unique_keys',
-                                                                                                      None))
+                                                                                                      None),
+                                                                   tags=self.spider_tags)

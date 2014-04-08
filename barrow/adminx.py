@@ -26,6 +26,7 @@ class SpiderTaskAdmin(object):
 
 
 class SpiderResultAdmin(object):
+    exclude = ['tags']
     list_display = ['hash_value', 'create_time', 'retrieved']
 
 
