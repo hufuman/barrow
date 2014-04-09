@@ -166,7 +166,10 @@ class SpiderResultManager(models.Manager):
     """ spider result model manager
     """
 
-    def add_result(self, spider_task, item, unique=False, unique_keys=None, tags=[]):
+    def add_result(self, spider_task, item, unique=False, unique_keys=None, tags=None):
+        if not tags:
+            tags = []
+
         sha = hashlib.sha256()
         sha.update(str(spider_task.spider.pk))  # add spider pk into hash
         json_item = ScrapyJSONEncoder().encode(item)

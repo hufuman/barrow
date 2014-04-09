@@ -26,13 +26,13 @@ class DynamicSpider(Spider):
     """ dynamic spider
     """
 
-    def __init__(self, spider_task):
+    def __init__(self, spider_task, spider_tags):
         self.spider_task = spider_task
         self.spider_config = json.loads(self.spider_task.spider.config)
         super(DynamicSpider, self).__init__(name=self.spider_config['application'],
                                             allowed_domains=self.spider_config['allowed_domains'],
                                             start_urls=self.spider_config['start_urls'])
-        self.spider_tags = [x.name for x in self.spider_task.spider.tags.all()]  # get spider tags for tagging results
+        self.spider_tags = spider_tags
 
     def _process_strip(self, source, strip_data):
         if isinstance(source, str) or isinstance(source, unicode):

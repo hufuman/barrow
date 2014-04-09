@@ -32,8 +32,9 @@ class Command(BaseCommand):
             raise CommandError('task not found')
 
         task = SpiderTask.objects.get(pk=int(options['task_id']))
+        spider_tags = [x.name for x in task.spider.tags.all()]
 
-        spider = DynamicSpider(spider_task=task)
+        spider = DynamicSpider(spider_task=task, spider_tags=spider_tags)
         settings = get_project_settings()
         crawler = Crawler(settings)
         crawler.signals.connect(reactor.stop, signal=signals.spider_closed)
