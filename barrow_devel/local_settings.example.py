@@ -27,3 +27,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = ''
 
 PYTHON_BIN = '/Users/jack/Developer/virtualenv/barrow/bin/python'
+
+CONCURRENT_TASK = 3

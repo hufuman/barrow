@@ -90,3 +90,5 @@ MEDIA_URL = local_settings.MEDIA_URL
 MEDIA_ROOT = local_settings.MEDIA_ROOT
 
 PYTHON_BIN = local_settings.PYTHON_BIN
+
+CONCURRENT_TASK = local_settings.CONCURRENT_TASK

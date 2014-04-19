@@ -114,9 +114,8 @@ class SpiderTaskManager(models.Manager):
     """ spider task model manager
     """
 
-    def create_and_run(self, spider):
-        task = self.create(spider=spider)
-        task.run()
+    def create_task(self, spider):
+        self.create(spider=spider)
 
 
 class SpiderTask(models.Model):
@@ -140,19 +139,28 @@ class SpiderTask(models.Model):
         self.spider.running = True
         self.spider.save()
 
-        # change to running state
+        # change spider to running state
         self.state = self.SPIDER_TASK_STATE.running
         self.save()
 
-        # run scrap from management command
-        with lcd(settings.BASE_DIR):
-            local('%s manage.py run_scrap --task_id=%d' % (settings.PYTHON_BIN, self.pk))
+        try:
 
-        # change to finish state
-        self.state = self.SPIDER_TASK_STATE.finished
-        self.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-        self.save()
+            # run scrap from management command
+            with lcd(settings.BASE_DIR):
+                local('%s manage.py run_scrap --task_id=%d' % (settings.PYTHON_BIN, self.pk))
 
+            # change to finish state
+            self.state = self.SPIDER_TASK_STATE.finished
+            self.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+            self.save()
+
+        except:
+            # error occured
+            self.state = self.SPIDER_TASK_STATE.error
+            self.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+            self.save()
+
+        # change spider to normal state
         self.spider.running = False
         self.spider.save()
 
