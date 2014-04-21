@@ -3,6 +3,7 @@
 
 __author__ = 'Jack River'
 
+import multiprocessing
 import pytz
 import json
 import datetime
@@ -118,6 +119,24 @@ class SpiderTaskManager(models.Manager):
         self.create(spider=spider)
 
 
+class TaskRunnerThread(multiprocessing.Process):
+
+    def __init__(self, task):
+        self.task = task
+        super(TaskRunnerThread, self).__init__()
+
+    def run(self):
+        try:
+            # run scrap from management command
+            with lcd(settings.BASE_DIR):
+                local('%s manage.py run_scrap --task_id=%d' % (settings.PYTHON_BIN, self.task.pk))
+        except:
+            # error occured
+            self.task.state = self.task.SPIDER_TASK_STATE.error
+            self.task.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+            self.task.save()
+
+
 class SpiderTask(models.Model):
     """ spider task model
     """
@@ -126,12 +145,24 @@ class SpiderTask(models.Model):
     SPIDER_TASK_STATE = Choices((0, 'initial', u'Initial'),
                                 (1, 'running', u'Running'),
                                 (2, 'finished', u'Finished'),
-                                (3, 'error', u'Error'))
+                                (3, 'error', u'Error'),
+                                (4, 'timeout', u'Timeout'),)
 
     spider = models.ForeignKey(Spider, verbose_name=u'Spider')
     start_time = models.DateTimeField(auto_now_add=True, verbose_name=u'Start Time')
     end_time = models.DateTimeField(default=None, null=True, blank=True, verbose_name=u'End Time')
     state = models.IntegerField(choices=SPIDER_TASK_STATE, default=SPIDER_TASK_STATE.initial, verbose_name=u'State')
+
+    def _run_task(self):
+        try:
+            # run scrap from management command
+            with lcd(settings.BASE_DIR):
+                local('%s manage.py run_scrap --task_id=%d' % (settings.PYTHON_BIN, self.pk))
+        except:
+            # error occured
+            self.state = self.task.SPIDER_TASK_STATE.error
+            self.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+            self.save()
 
     def run(self):
         """ run task
@@ -143,22 +174,21 @@ class SpiderTask(models.Model):
         self.state = self.SPIDER_TASK_STATE.running
         self.save()
 
-        try:
-
-            # run scrap from management command
-            with lcd(settings.BASE_DIR):
-                local('%s manage.py run_scrap --task_id=%d' % (settings.PYTHON_BIN, self.pk))
-
-            # change to finish state
-            self.state = self.SPIDER_TASK_STATE.finished
+        new_process = multiprocessing.Process(target=self._run_task)
+        new_process.start()
+        new_process.join(timeout=settings.SPIDER_RUNNER_TIMEOUT)
+        if new_process.is_alive():
+            # timeout reached, but process is still running, so terminate it, and set task state to TIMEOUT
+            new_process.terminate()
+            self.state = self.SPIDER_TASK_STATE.timeout
             self.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
             self.save()
-
-        except:
-            # error occured
-            self.state = self.SPIDER_TASK_STATE.error
-            self.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-            self.save()
+        else:
+            if self.state != self.SPIDER_TASK_STATE.error:
+                # no error occur while running, so change to finish state
+                self.state = self.SPIDER_TASK_STATE.finished
+                self.end_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+                self.save()
 
         # change spider to normal state
         self.spider.running = False

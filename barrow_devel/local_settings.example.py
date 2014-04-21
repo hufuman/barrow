@@ -29,3 +29,5 @@ MEDIA_ROOT = ''
 PYTHON_BIN = '/Users/jack/Developer/virtualenv/barrow/bin/python'
 
 CONCURRENT_TASK = 3
+
+SPIDER_RUNNER_TIMEOUT = 600
