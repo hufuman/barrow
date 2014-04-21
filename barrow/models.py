@@ -9,6 +9,7 @@ import json
 import datetime
 import hashlib
 from fabric.api import local, lcd
+from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
@@ -19,13 +20,13 @@ from model_utils import Choices
 class Application(models.Model):
     """ application model
     """
-    name = models.CharField(max_length=255, unique=True, verbose_name=u'Name')
-    display_name = models.CharField(max_length=255, verbose_name=u'Display Name')
+    name = models.CharField(max_length=255, unique=True, verbose_name=_(u'Name'))
+    display_name = models.CharField(max_length=255, verbose_name=_(u'Display Name'))
 
     class Meta(object):
         app_label = u'barrow'
-        verbose_name = u'Application'
-        verbose_name_plural = u'Application'
+        verbose_name = _(u'Application')
+        verbose_name_plural = _(u'Application')
 
     def __unicode__(self):
         return self.display_name
@@ -50,12 +51,12 @@ class SpiderTag(models.Model):
     """
     objects = SpiderTagManager()
 
-    name = models.CharField(max_length=255, verbose_name=u'Tag Name')
+    name = models.CharField(max_length=255, verbose_name=_(u'Tag Name'))
 
     class Meta(object):
         app_label = u'barrow'
-        verbose_name = u'Spider Tag'
-        verbose_name_plural = u'Spider Tag'
+        verbose_name = _(u'Spider Tag')
+        verbose_name_plural = _(u'Spider Tag')
 
     def __unicode__(self):
         return self.name
@@ -87,25 +88,25 @@ class Spider(models.Model):
     """
     objects = SpiderManager()
 
-    SPIDER_PRIORITY_LEVELS = Choices((0, 'unimportant', u'不重要的'),
-                                     (1, 'low', u'低'),
-                                     (2, 'medium', u'中',),
-                                     (3, 'high', u'高'),
-                                     (4, 'critical', u'至关重要的'))
+    SPIDER_PRIORITY_LEVELS = Choices((0, 'unimportant', _(u'Unimportant')),
+                                     (1, 'low', _(u'Low')),
+                                     (2, 'medium', _(u'Medium')),
+                                     (3, 'high', _(u'High')),
+                                     (4, 'critical', _(u'Critical')))
 
-    application = models.ForeignKey(Application, verbose_name=u'Application')
-    name = models.CharField(max_length=255, verbose_name=u'Spider Name', default=u'Default Spider')
-    config = models.TextField(verbose_name=u'Spider Config')
-    running = models.BooleanField(verbose_name=u'Running', default=False)
-    last_update = models.DateTimeField(verbose_name=u'Update Time', auto_now_add=True)
-    tags = models.ManyToManyField(SpiderTag, verbose_name=u'Tags', related_name=u'spiders')
-    priority = models.IntegerField(choices=SPIDER_PRIORITY_LEVELS, verbose_name=u'优先级',
+    application = models.ForeignKey(Application, verbose_name=_(u'Application'))
+    name = models.CharField(max_length=255, verbose_name=_(u'Spider Name'), default=_(u'Default Spider'))
+    config = models.TextField(verbose_name=_(u'Spider Config'))
+    running = models.BooleanField(verbose_name=_(u'Running'), default=False)
+    last_update = models.DateTimeField(verbose_name=_(u'Update Time'), auto_now_add=True)
+    tags = models.ManyToManyField(SpiderTag, verbose_name=_(u'Tags'), related_name=u'spiders')
+    priority = models.IntegerField(choices=SPIDER_PRIORITY_LEVELS, verbose_name=_(u'Priority'),
                                    default=SPIDER_PRIORITY_LEVELS.low)
 
     class Meta(object):
         app_label = u'barrow'
-        verbose_name = u'Spider'
-        verbose_name_plural = u'Spider'
+        verbose_name = _(u'Spider')
+        verbose_name_plural = _(u'Spider')
 
     def __unicode__(self):
         return self.name
@@ -142,16 +143,16 @@ class SpiderTask(models.Model):
     """
     objects = SpiderTaskManager()
 
-    SPIDER_TASK_STATE = Choices((0, 'initial', u'Initial'),
-                                (1, 'running', u'Running'),
-                                (2, 'finished', u'Finished'),
-                                (3, 'error', u'Error'),
-                                (4, 'timeout', u'Timeout'),)
+    SPIDER_TASK_STATE = Choices((0, 'initial', _(u'Initial')),
+                                (1, 'running', _(u'Running')),
+                                (2, 'finished', _(u'Finished')),
+                                (3, 'error', _(u'Error')),
+                                (4, 'timeout', _(u'Timeout')),)
 
-    spider = models.ForeignKey(Spider, verbose_name=u'Spider')
-    start_time = models.DateTimeField(auto_now_add=True, verbose_name=u'Start Time')
-    end_time = models.DateTimeField(default=None, null=True, blank=True, verbose_name=u'End Time')
-    state = models.IntegerField(choices=SPIDER_TASK_STATE, default=SPIDER_TASK_STATE.initial, verbose_name=u'State')
+    spider = models.ForeignKey(Spider, verbose_name=_(u'Spider'))
+    start_time = models.DateTimeField(auto_now_add=True, verbose_name=_(u'Start Time'))
+    end_time = models.DateTimeField(default=None, null=True, blank=True, verbose_name=_(u'End Time'))
+    state = models.IntegerField(choices=SPIDER_TASK_STATE, default=SPIDER_TASK_STATE.initial, verbose_name=_(u'State'))
 
     def _run_task(self):
         try:
@@ -196,8 +197,8 @@ class SpiderTask(models.Model):
 
     class Meta(object):
         app_label = u'barrow'
-        verbose_name = u'Spider Task'
-        verbose_name_plural = u'Spider Task'
+        verbose_name = _(u'Spider Task')
+        verbose_name_plural = _(u'Spider Task')
 
 
 class SpiderResultManager(models.Manager):
@@ -260,17 +261,17 @@ class SpiderResult(models.Model):
     """
     objects = SpiderResultManager()
 
-    spider_task = models.ForeignKey(SpiderTask, verbose_name=u'Spider Task')
-    hash_value = models.CharField(max_length=256, verbose_name=u'Hash')
-    content = models.TextField(verbose_name=u'Result Content')
-    create_time = models.DateTimeField(verbose_name=u'Create Time', null=True, auto_now_add=True, db_index=True)
-    retrieved = models.BooleanField(verbose_name=u'Retrieved', default=False, db_index=True)
-    tags = models.TextField(verbose_name=u'Tags', default=u'[]')
+    spider_task = models.ForeignKey(SpiderTask, verbose_name=_(u'Spider Task'))
+    hash_value = models.CharField(max_length=256, verbose_name=_(u'Hash'))
+    content = models.TextField(verbose_name=_(u'Result Content'))
+    create_time = models.DateTimeField(verbose_name=_(u'Create Time'), null=True, auto_now_add=True, db_index=True)
+    retrieved = models.BooleanField(verbose_name=_(u'Retrieved'), default=False, db_index=True)
+    tags = models.TextField(verbose_name=_(u'Tags'), default=u'[]')
 
     class Meta(object):
         app_label = u'barrow'
-        verbose_name = u'Spider Result'
-        verbose_name_plural = u'Spider Result'
+        verbose_name = _(u'Spider Result')
+        verbose_name_plural = _(u'Spider Result')
 
     def __unicode__(self):
         return self.hash_value

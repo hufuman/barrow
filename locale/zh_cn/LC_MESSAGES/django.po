@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-21 18:07+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: barrow/models.py:23
+msgid "Name"
+msgstr "名称"
+
+#: barrow/models.py:24
+msgid "Display Name"
+msgstr "显示名称"
+
+#: barrow/models.py:28 barrow/models.py:29 barrow/models.py:97
+msgid "Application"
+msgstr "应用"
+
+#: barrow/models.py:54
+msgid "Tag Name"
+msgstr "标签名称"
+
+#: barrow/models.py:58 barrow/models.py:59
+msgid "Spider Tag"
+msgstr "爬虫标签"
+
+#: barrow/models.py:91
+msgid "Unimportant"
+msgstr "不重要"
+
+#: barrow/models.py:92
+msgid "Low"
+msgstr "低"
+
+#: barrow/models.py:93
+msgid "Medium"
+msgstr "中等"
+
+#: barrow/models.py:94
+msgid "High"
+msgstr "搞"
+
+#: barrow/models.py:95
+msgid "Critical"
+msgstr "至关重要"
+
+#: barrow/models.py:98
+msgid "Spider Name"
+msgstr "爬虫名称"
+
+#: barrow/models.py:98
+msgid "Default Spider"
+msgstr "默认爬虫"
+
+#: barrow/models.py:99
+msgid "Spider Config"
+msgstr "爬虫配置"
+
+#: barrow/models.py:100 barrow/models.py:147
+msgid "Running"
+msgstr "运行中"
+
+#: barrow/models.py:101
+msgid "Update Time"
+msgstr "更新时间"
+
+#: barrow/models.py:102 barrow/models.py:269
+msgid "Tags"
+msgstr "标签"
+
+#: barrow/models.py:103
+msgid "Priority"
+msgstr "优先级"
+
+#: barrow/models.py:108 barrow/models.py:109 barrow/models.py:152
+msgid "Spider"
+msgstr "爬虫"
+
+#: barrow/models.py:146
+msgid "Initial"
+msgstr "初始化"
+
+#: barrow/models.py:148
+msgid "Finished"
+msgstr "已完成"
+
+#: barrow/models.py:149
+msgid "Error"
+msgstr "错误"
+
+#: barrow/models.py:150
+msgid "Timeout"
+msgstr "超时"
+
+#: barrow/models.py:153
+msgid "Start Time"
+msgstr "开始时间"
+
+#: barrow/models.py:154
+msgid "End Time"
+msgstr "结束时间"
+
+#: barrow/models.py:155
+msgid "State"
+msgstr "状态"
+
+#: barrow/models.py:200 barrow/models.py:201 barrow/models.py:264
+msgid "Spider Task"
+msgstr "爬虫任务"
+
+#: barrow/models.py:265
+msgid "Hash"
+msgstr "哈希"
+
+#: barrow/models.py:266
+msgid "Result Content"
+msgstr "结果内容"
+
+#: barrow/models.py:267
+msgid "Create Time"
+msgstr "创建时间"
+
+#: barrow/models.py:268
+msgid "Retrieved"
+msgstr "已取回"
+
+#: barrow/models.py:273 barrow/models.py:274
+msgid "Spider Result"
+msgstr "爬虫结果"

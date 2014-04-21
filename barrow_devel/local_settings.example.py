@@ -17,6 +17,10 @@ DATABASES = {
     }
 }
 
+LANGUAGE_CODE = 'en-us'
+
+TIMEZONE = 'Asia/Shanghai'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 

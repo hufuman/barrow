@@ -73,9 +73,9 @@ DATABASES = local_settings.DATABASES
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = local_settings.LANGUAGE_CODE
 
-TIME_ZONE = 'Asia/Shanghai'
+TIME_ZONE = local_settings.TIMEZONE
 
 USE_I18N = True
 
@@ -94,3 +94,7 @@ PYTHON_BIN = local_settings.PYTHON_BIN
 CONCURRENT_TASK = local_settings.CONCURRENT_TASK
 
 SPIDER_RUNNER_TIMEOUT = local_settings.SPIDER_RUNNER_TIMEOUT
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
