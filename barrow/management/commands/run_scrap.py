@@ -3,6 +3,7 @@
 
 __author__ = 'Jack River'
 
+from django.utils.translation import ugettext as _
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 
@@ -21,15 +22,15 @@ class Command(BaseCommand):
                     dest='task_id',
                     metavar="TASK ID",
                     default='',
-                    help='which spider task to run'),
+                    help=_(u'Which spider task to run')),
     )
 
     def handle(self, *args, **options):
         if not options.get('task_id', None):
-            raise CommandError('task id must be provided')
+            raise CommandError(_(u'Task id must be provided'))
 
         if not SpiderTask.objects.filter(pk=int(options['task_id'])):
-            raise CommandError('task not found')
+            raise CommandError(_(u'Task not found'))
 
         task = SpiderTask.objects.get(pk=int(options['task_id']))
         spider_tags = [x.name for x in task.spider.tags.all()]
@@ -44,4 +45,4 @@ class Command(BaseCommand):
         log.start(loglevel=log.DEBUG, crawler=crawler)
         reactor.run()
 
-        print('done crawling')
+        print(_(u'done crawling'))

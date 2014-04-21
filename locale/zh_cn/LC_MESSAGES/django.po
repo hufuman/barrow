@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-21 18:07+0800\n"
+"POT-Creation-Date: 2014-04-21 18:36+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,3 +141,19 @@ msgstr "已取回"
 #: barrow/models.py:273 barrow/models.py:274
 msgid "Spider Result"
 msgstr "爬虫结果"
+
+#: barrow/management/commands/run_scrap.py:25
+msgid "Which spider task to run"
+msgstr "运行哪一个爬虫任务"
+
+#: barrow/management/commands/run_scrap.py:30
+msgid "Task id must be provided"
+msgstr "必须提供任务ID"
+
+#: barrow/management/commands/run_scrap.py:33
+msgid "Task not found"
+msgstr "任务未找到"
+
+#: barrow/management/commands/run_scrap.py:48
+msgid "done crawling"
+msgstr "完成爬取"
