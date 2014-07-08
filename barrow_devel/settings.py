@@ -98,3 +98,7 @@ SPIDER_RUNNER_TIMEOUT = local_settings.SPIDER_RUNNER_TIMEOUT
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
+
+REDIS_CONFIG = local_settings.REDIS_CONFIG
+
+UNIQUE_SPIDER_RESULT_REDIS_CACHE_NAME = 'barrow:spider:unique:resultset'

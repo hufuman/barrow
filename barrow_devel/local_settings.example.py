@@ -35,3 +35,9 @@ PYTHON_BIN = '/Users/jack/Developer/virtualenv/barrow/bin/python'
 CONCURRENT_TASK = 3
 
 SPIDER_RUNNER_TIMEOUT = 600
+
+REDIS_CONFIG = {
+    'host': '127.0.0.1',
+    'port': 6379,
+    'db': 0
+}

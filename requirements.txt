@@ -8,3 +8,4 @@ apscheduler
 fabric
 djangorestframework
 pytz
+redis

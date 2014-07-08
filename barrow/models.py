@@ -8,6 +8,7 @@ import pytz
 import json
 import datetime
 import hashlib
+import redis
 from fabric.api import local, lcd
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -206,6 +207,7 @@ class SpiderResultManager(models.Manager):
     """
 
     def add_result(self, spider_task, item, unique=False, unique_keys=None, tags=None):
+        redis_server = redis.Redis(**settings.REDIS_CONFIG)
         if not tags:
             tags = []
 
@@ -220,16 +222,20 @@ class SpiderResultManager(models.Manager):
             sha.update('spider' + str(spider_task.spider.pk))
 
             hash_value = sha.hexdigest()
-
-            if self.filter(hash_value=hash_value).exists():
+            if redis_server.sismember(settings.UNIQUE_SPIDER_RESULT_REDIS_CACHE_NAME, hash_value):
+                # hash exists, then unique required, return none
                 return None
         else:
             hash_value = sha.update(json_item).hexdigest()  # hash whole content
 
-        return self.create(spider_task=spider_task,
-                           hash_value=hash_value,
-                           content=json_item,
-                           tags=json.dumps(tags))
+        new_object = self.create(spider_task=spider_task,
+                                 hash_value=hash_value,
+                                 content=json_item,
+                                 tags=json.dumps(tags))
+        if new_object:
+            redis_server.sadd(settings.UNIQUE_SPIDER_RESULT_REDIS_CACHE_NAME, new_object.hash_value)
+
+        return new_object
 
     def fetch_result_spider(self, spider):
         results = self.filter(spider_task__spider=spider, retrieved=False)
