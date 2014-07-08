@@ -20,6 +20,9 @@ def queue_spider_task(spider):
     if spider.running:
         # wait for current spider task to finish
         return
+    elif SpiderTask.objects.filter(spider=spider, state=SpiderTask.SPIDER_TASK_STATE.initial).exists():
+        # wait while there is any initial task of this spider
+        return
     else:
         SpiderTask.objects.create_task(spider)
 
